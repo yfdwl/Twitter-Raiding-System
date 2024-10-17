@@ -1,0 +1,122 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT id, first_name, last_name, birthday, email, wallet_address, twitter_id, twitter_username, username, profile_img, bio, discord_username, discord_follows, linkedin_username, telegram_id, telegram_username, approved, signature\n        FROM beta_users\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "first_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "last_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "birthday",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 4,
+        "name": "email",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "wallet_address",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "twitter_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "twitter_username",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "username",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "profile_img",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 10,
+        "name": "bio",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "discord_username",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 12,
+        "name": "discord_follows",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 13,
+        "name": "linkedin_username",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 14,
+        "name": "telegram_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 15,
+        "name": "telegram_username",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 16,
+        "name": "approved",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 17,
+        "name": "signature",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "dbfe3b0265df364b34af0c7d4c1790ad15c3c144f4cc57c2ec6d30016cf89cf7"
+}

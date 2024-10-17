@@ -43,7 +43,7 @@ pub fn run(listener: TcpListener, pg_pool: PgDb) -> Result<Server, std::io::Erro
     let server = HttpServer::new(move || {
         App::new()
             .app_data(pg_db.clone())
-            .service(RaidsController::get_scope(""))
+            .service(RaidsController::get_scope("/raids"))
     })
     .listen(listener)?
     .run();

@@ -677,6 +677,7 @@ dependencies = [
  "iana-time-zone",
  "js-sys",
  "num-traits",
+ "serde",
  "wasm-bindgen",
  "windows-targets 0.52.6",
 ]
@@ -2680,12 +2681,14 @@ dependencies = [
  "actix-web",
  "anyhow",
  "apistos",
+ "chrono",
  "dotenv",
  "log",
  "reqwest",
  "serde",
  "serde_json",
  "sqlx",
+ "uuid",
 ]
 
 [[package]]
