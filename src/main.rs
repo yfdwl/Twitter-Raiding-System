@@ -1,9 +1,12 @@
+use stakit_raids::core::xapis::retweeted_users::get_retweeted_users;
 use stakit_raids::env::Vars;
 use stakit_raids::server::Application;
 
 #[actix_web::main]
 pub async fn main() -> Result<(), std::io::Error> {
     dotenv::dotenv().ok();
+
+    let _ = get_retweeted_users("1846574339434447299").await;
 
     println!("Loading environment variables...");
     let vars = Vars::load()?;

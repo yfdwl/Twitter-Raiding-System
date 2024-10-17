@@ -1,59 +1,84 @@
-use actix_web::HttpResponse;
+use crate::env::Vars;
 use reqwest;
 use reqwest::header::{HeaderMap, HeaderValue};
 use serde_json::Value;
 
-pub struct UserID {
-    pub id: i32,
-}
+pub async fn get_retweeted_users(tweet_id: &str) -> Vec<String> {
+    let vars = Vars::load();
+    match vars {
+        Ok(vars) => {
+            let api_host = vars.rapid_api_host.as_str();
+            let api_key = vars.rapid_api_key.as_str();
+            let count = 200;
+            let endpoint_url = format!(
+                "https://{}/v2/Retweeters/?id={}&count={}",
+                api_host, tweet_id, count
+            );
 
-// pub async fn get_retweeted_users(tweet_id: web::Path<String>) -> HttpResponse {
-pub async fn get_retweeted_users() -> HttpResponse {
-    // let user_ids: Vec<UserID> = Vec::new();
-    // Load the Bearer token from environment variables
-    // let token = match env::var("BEARER_TOKEN") {
-    //     Ok(val) => val,
-    //     Err(_) => return HttpResponse::InternalServerError().body("Missing bearer token"),
-    // };
-    let api_host = "twitter135.p.rapidapi.com";
-    let api_key = "6c46e6f106msh5d04b566bf506d5p196810jsn01cafc4d064b"; // Add your API key here
+            // config headers info
+            let mut headers = HeaderMap::new();
+            headers.insert("x-rapidapi-key", HeaderValue::from_str(api_key).unwrap());
+            headers.insert("x-rapidapi-host", HeaderValue::from_str(api_host).unwrap());
 
-    let tweet_id = "1846574339434447299"; // Example Tweet ID
-    let count = 20;
-
-    let endpoint_url = format!(
-        "https://{}/v2/Retweeters/?id={}&count={}",
-        api_host, tweet_id, count
-    );
-
-    // let endpoint_url = format!("https://api.twitter.com/2/tweets/{}/retweeted_by", tweet_id);
-    // let endpoint_url = format!("https://twitter135.p.rapidapi.com/v2/Retweeters/");
-
-    // Create headers
-    // let mut headers = HeaderMap::new();
-    // headers.insert(USER_AGENT, HeaderValue::from_static("v2LikingUsersRust"));
-    // headers.insert(AUTHORIZATION, HeaderValue::from_str(&format!("Bearer {}", token)).unwrap());
-
-    let mut headers = HeaderMap::new();
-    headers.insert("x-rapidapi-key", HeaderValue::from_str(api_key).unwrap());
-    headers.insert("x-rapidapi-host", HeaderValue::from_str(api_host).unwrap());
-    // Send request
-    let client = reqwest::Client::new();
-    println!("f{endpoint_url}");
-    match client.get(&endpoint_url).headers(headers).send().await {
-        Ok(res) => {
-            if res.status().is_success() {
-                match res.json::<Value>().await {
-                    Ok(json_data) => {
-                        println!("{}", serde_json::to_string_pretty(&json_data).unwrap());
-                        HttpResponse::Ok().json(json_data)
+            let client = reqwest::Client::new();
+            match client.get(&endpoint_url).headers(headers).send().await {
+                Ok(res) => {
+                    if res.status().is_success() {
+                        match res.json::<Value>().await {
+                            Ok(json_data) => {
+                                if let Some(entries) = json_data
+                                    .get("data")
+                                    .and_then(|data| data.get("retweeters_timeline"))
+                                    .and_then(|timeline| timeline.get("timeline"))
+                                    .and_then(|timeline| timeline.get("instructions"))
+                                    .and_then(|instructions| instructions.get(0))
+                                    .and_then(|instruction| instruction.get("entries"))
+                                {
+                                    let mut user_ids: Vec<String> = Vec::new();
+                                    if let Some(entries_array) = entries.as_array() {
+                                        for entry in entries_array {
+                                            // Check if entry has an id field
+                                            if let Some(id_value) =
+                                                entry.get("entryId").and_then(Value::as_str)
+                                            {
+                                                // Check if the ID starts with "user-"
+                                                if id_value.starts_with("user-") {
+                                                    user_ids.push(id_value.to_string());
+                                                }
+                                            }
+                                        }
+                                        print!("{:#?}", user_ids);
+                                        Vec::new()
+                                    } else {
+                                        println!("Expected entries to be an array.");
+                                        Vec::new()
+                                    }
+                                } else {
+                                    println!(
+                                        "Could not find the expected fields in the JSON data."
+                                    );
+                                    Vec::new() // Return empty Vec
+                                }
+                            }
+                            Err(_) => {
+                                println!("Failed to parse JSON");
+                                Vec::new()
+                            }
+                        }
+                    } else {
+                        println!("Unsuccessful request");
+                        Vec::new()
                     }
-                    Err(_) => HttpResponse::InternalServerError().body("Failed to parse JSON"),
                 }
-            } else {
-                HttpResponse::BadRequest().body("Unsuccessful request")
+                Err(_) => {
+                    println!("Failed to send request");
+                    Vec::new()
+                }
             }
         }
-        Err(_) => HttpResponse::InternalServerError().body("Failed to send request"),
+        Err(_) => {
+            println!("Failed to send request");
+            Vec::new()
+        }
     }
 }
