@@ -1,0 +1,38 @@
+[package]
+name = "stakit-raids"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = "1.0.71"
+actix-web = "4.3.1"
+dotenv = "0.15.0"
+serde = { version = "1.0.167", features = ["derive"] }
+reqwest = { version = "0.11.18", default-features = false, features = [
+    "json",
+    "default-tls",
+    "rustls-tls",
+    "tokio-native-tls",
+] }
+serde_json = "1.0.100"
+log = "0.4.19"
+apistos = { version = "0.2", features = [
+    "extras",
+    "qs_query",
+    "scalar",
+    "multipart",
+    "swagger-ui",
+] }
+sqlx = { version = "0.7.0", default-features = false, features = [
+    "postgres",
+    "macros",
+    "chrono",
+    "json",
+    "uuid",
+    "runtime-tokio-rustls", 
+    "bigdecimal",
+    "migrate",
+] }
