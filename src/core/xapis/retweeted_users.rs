@@ -7,7 +7,7 @@ pub async fn get_retweeted_users(tweet_id: &str) -> Vec<String> {
     let vars = Vars::load();
     match vars {
         Ok(vars) => {
-            let api_host = vars.rapid_api_host.as_str();
+            let api_host = vars.rapid_galvier_api_host.as_str();
             let api_key = vars.rapid_api_key.as_str();
             let count = 200;
             let endpoint_url = format!(

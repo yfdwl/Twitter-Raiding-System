@@ -1,4 +1,5 @@
-use stakit_raids::core::xapis::retweeted_users::get_retweeted_users;
+use stakit_raids::core::xapis::quote_users::get_replying_users;
+// use stakit_raids::core::xapis::retweeted_users::get_retweeted_users;
 use stakit_raids::env::Vars;
 use stakit_raids::server::Application;
 
@@ -6,7 +7,9 @@ use stakit_raids::server::Application;
 pub async fn main() -> Result<(), std::io::Error> {
     dotenv::dotenv().ok();
 
-    let _ = get_retweeted_users("1846574339434447299").await;
+    // let _ = get_retweeted_users("1846574339434447299").await;
+    let _ = get_replying_users("1846574339434447299").await;
+    // let _ = get_replying_users("1847028043128136067").await;
 
     println!("Loading environment variables...");
     let vars = Vars::load()?;

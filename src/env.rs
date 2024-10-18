@@ -10,7 +10,8 @@ pub struct Vars {
     pub postgres_password: String,
     pub postgres_database: String,
     pub rapid_api_key: String,
-    pub rapid_api_host: String,
+    pub rapid_galvier_api_host: String,
+    pub rapid_davethebeast_api_host: String,
     pub native_x_api_key: String,
     pub native_x_bear_token: String,
 }
@@ -26,7 +27,8 @@ impl Vars {
             postgres_port: load_var("POSTGRES_PORT")?,
             postgres_database: load_var("POSTGRES_DATABASE")?,
             rapid_api_key: load_var("RAPID_X_API_KEY")?,
-            rapid_api_host: load_var("RAPID_X_API_HOST")?,
+            rapid_galvier_api_host: load_var("RAPID_GLAVIER_X_API_HOST")?,
+            rapid_davethebeast_api_host: load_var("RAPID_DAVETHEBEAST_X_API_HOST")?,
             native_x_api_key: load_var("NATIVE_X_API_KEY")?,
             native_x_bear_token: load_var("NATIVE_X_BEARER_TOKEN")?,
         })
