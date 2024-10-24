@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE staking_raids\n        SET pt_by_retweet = $1\n        WHERE id = $2\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Numeric",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "3af34b194a888a80d72edb8ff344fa59a9c0de4102aabf7a5f2bea83485ef2c3"
+}

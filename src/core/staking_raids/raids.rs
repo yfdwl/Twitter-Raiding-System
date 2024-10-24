@@ -1,6 +1,6 @@
 use bigdecimal::BigDecimal;
-use sqlx::{PgPool, Result};
 use serde::Serialize;
+use sqlx::{PgPool, Result};
 use uuid::Uuid;
 
 #[derive(Debug, Serialize)]
@@ -13,7 +13,14 @@ pub struct Raids {
     pub pt_by_liking: Option<BigDecimal>,
     pub pt_by_retweet: Option<BigDecimal>,
     pub pt_by_replying: Option<BigDecimal>,
-    pub total_pt: Option<BigDecimal>
+    pub total_pt: Option<BigDecimal>,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LeaderBoard {
+    user_id: Option<String>,
+    total_pt: Option<BigDecimal>,
+    rank: Option<i64>,
 }
 
 pub async fn get_all_raids(pool: &PgPool) -> Result<Vec<Raids>> {
@@ -39,7 +46,7 @@ pub async fn create_new_raid(
     pt_by_liking: Option<BigDecimal>,
     pt_by_retweet: Option<BigDecimal>,
     pt_by_replying: Option<BigDecimal>,
-    total_pt: Option<BigDecimal>
+    total_pt: Option<BigDecimal>,
 ) -> Result<Uuid> {
     // Generate a new UUID for the new raid entry
     let id = Uuid::new_v4();
@@ -173,8 +180,6 @@ pub async fn update_total_pt(
 }
 
 pub async fn get_raids_by_id(pool: &PgPool, user_id: Uuid) -> Result<Raids> {
-    
-    
     let user = sqlx::query_as!(
         Raids,
         r#"
@@ -188,4 +193,31 @@ pub async fn get_raids_by_id(pool: &PgPool, user_id: Uuid) -> Result<Raids> {
     .await?;
 
     Ok(user)
+}
+
+pub async fn get_leaderboard_by_project_id(
+    pool: &PgPool,
+    project_id: String,
+) -> Result<Vec<LeaderBoard>> {
+    // Struct or tuple that matches the query result
+    let leader_board = sqlx::query_as!(
+        LeaderBoard, // Replace with the actual struct or tuple name
+        r#"
+        SELECT 
+            user_id, 
+            total_pt, 
+            RANK() OVER (ORDER BY total_pt DESC) AS rank
+        FROM 
+            staking_raids
+        WHERE 
+            project_id = $1
+        ORDER BY 
+            total_pt DESC
+        "#,
+        project_id // Pass as query parameter
+    )
+    .fetch_all(pool)
+    .await?; // Fix typo: .await instead of .awai
+
+    Ok(leader_board)
 }

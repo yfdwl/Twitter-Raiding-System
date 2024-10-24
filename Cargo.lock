@@ -503,6 +503,7 @@ dependencies = [
  "num-bigint",
  "num-integer",
  "num-traits",
+ "serde",
 ]
 
 [[package]]
@@ -2681,6 +2682,7 @@ dependencies = [
  "actix-web",
  "anyhow",
  "apistos",
+ "bigdecimal",
  "chrono",
  "dotenv",
  "log",

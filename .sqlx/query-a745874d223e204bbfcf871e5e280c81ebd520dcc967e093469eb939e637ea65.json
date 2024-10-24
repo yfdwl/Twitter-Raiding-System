@@ -1,0 +1,70 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT id, project_id, tw_id, user_id, pt_by_following, pt_by_liking, pt_by_retweet, pt_by_replying, total_pt\n        FROM staking_raids\n        WHERE id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "project_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "tw_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "user_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "pt_by_following",
+        "type_info": "Numeric"
+      },
+      {
+        "ordinal": 5,
+        "name": "pt_by_liking",
+        "type_info": "Numeric"
+      },
+      {
+        "ordinal": 6,
+        "name": "pt_by_retweet",
+        "type_info": "Numeric"
+      },
+      {
+        "ordinal": 7,
+        "name": "pt_by_replying",
+        "type_info": "Numeric"
+      },
+      {
+        "ordinal": 8,
+        "name": "total_pt",
+        "type_info": "Numeric"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "a745874d223e204bbfcf871e5e280c81ebd520dcc967e093469eb939e637ea65"
+}
