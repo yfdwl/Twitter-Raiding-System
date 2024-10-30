@@ -3,3 +3,4 @@ pub mod staking_raids;
 pub mod users;
 pub mod xapis;
 pub mod db;
+pub mod discord;

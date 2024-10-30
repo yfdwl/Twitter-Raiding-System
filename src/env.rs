@@ -14,6 +14,7 @@ pub struct Vars {
     pub rapid_davethebeast_api_host: String,
     pub native_x_api_key: String,
     pub native_x_bear_token: String,
+    pub discord_bot_token: String,
 }
 
 impl Vars {
@@ -31,6 +32,7 @@ impl Vars {
             rapid_davethebeast_api_host: load_var("RAPID_DAVETHEBEAST_X_API_HOST")?,
             native_x_api_key: load_var("NATIVE_X_API_KEY")?,
             native_x_bear_token: load_var("NATIVE_X_BEARER_TOKEN")?,
+            discord_bot_token: load_var("DISCORD_TOKEN")?
         })
     }
 
