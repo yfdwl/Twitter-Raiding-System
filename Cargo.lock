@@ -2805,6 +2805,7 @@ dependencies = [
  "actix-web",
  "anyhow",
  "apistos",
+ "apistos-schemars",
  "bigdecimal",
  "chrono",
  "dotenv",
