@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
-use sqlx::{PgPool, Result};
 use serde::Serialize;
+use sqlx::{PgPool, Result};
 use uuid::Uuid;
 
 #[derive(Debug, Serialize)]
@@ -22,19 +22,19 @@ pub struct User {
     pub linkedin_username: Option<String>,
     pub approved: Option<bool>,
     pub signature: Option<String>,
-    pub birthday: Option<NaiveDate>
+    pub birthday: Option<NaiveDate>,
 }
 
-pub async fn get_all_beta_users(pool: &PgPool) -> Result<Vec<User>> {
-    let users = sqlx::query_as!(
-        User,
+pub async fn get_all_beta_users_twitter_ids(pool: &PgPool) -> Vec<String> {
+    let twitter_ids = sqlx::query_scalar!(
         r#"
-        SELECT id, first_name, last_name, birthday, email, wallet_address, twitter_id, twitter_username, username, profile_img, bio, discord_username, discord_follows, linkedin_username, telegram_id, telegram_username, approved, signature
+        SELECT twitter_id
         FROM beta_users
         "#
     )
     .fetch_all(pool)
-    .await?;
+    .await
+    .unwrap_or_else(|_| Vec::new());
 
-    Ok(users)
+    twitter_ids.into_iter().filter_map(|id| id).collect()
 }

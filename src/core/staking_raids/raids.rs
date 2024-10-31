@@ -23,7 +23,45 @@ pub struct LeaderBoard {
     rank: Option<i64>,
 }
 
-pub async fn get_all_raids(pool: &PgPool) -> Result<Vec<Raids>> {
+pub async fn create_new_raid(
+    pool: &PgPool,
+    project_id: String,
+    tw_id: String,
+    user_id: String,
+    pt_by_following: BigDecimal,
+    pt_by_liking: BigDecimal,
+    pt_by_retweet: BigDecimal,
+    pt_by_replying: BigDecimal,
+    total_pt: BigDecimal,
+) -> Result<Raids> {
+    let id = Uuid::new_v4();
+
+    let inserted_row = sqlx::query_as!(
+        Raids,
+        r#"
+        INSERT INTO staking_raids (id, project_id, tw_id, user_id, pt_by_following, pt_by_liking, pt_by_retweet, pt_by_replying, total_pt)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING id, project_id, tw_id, user_id, pt_by_following, pt_by_liking, pt_by_retweet, pt_by_replying, total_pt
+        "#,
+        id,
+        project_id,
+        tw_id,
+        user_id,
+        pt_by_following,
+        pt_by_liking,
+        pt_by_retweet,
+        pt_by_replying,
+        total_pt
+    )
+    .fetch_one(pool)
+    .await?;
+
+    Ok(inserted_row)
+}
+
+pub async fn get_all_raids(
+    pool: &PgPool
+) -> Result<Vec<Raids>> {
     let users = sqlx::query_as!(
         Raids,
         r#"
@@ -37,171 +75,56 @@ pub async fn get_all_raids(pool: &PgPool) -> Result<Vec<Raids>> {
     Ok(users)
 }
 
-pub async fn create_new_raid(
+pub async fn get_user_by_id(
     pool: &PgPool,
-    project_id: Option<String>,
-    tw_id: Option<String>,
-    user_id: Option<String>,
-    pt_by_following: Option<BigDecimal>,
-    pt_by_liking: Option<BigDecimal>,
-    pt_by_retweet: Option<BigDecimal>,
-    pt_by_replying: Option<BigDecimal>,
-    total_pt: Option<BigDecimal>,
-) -> Result<Uuid> {
-    // Generate a new UUID for the new raid entry
-    let id = Uuid::new_v4();
-
-    // Insert the new row into the `staking_raids` table
-    sqlx::query!(
-        r#"
-        INSERT INTO staking_raids (id, project_id, tw_id, user_id, pt_by_following, pt_by_liking, pt_by_retweet, pt_by_replying, total_pt)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-        "#,
-        id,
-        project_id,
-        tw_id,
-        user_id,
-        pt_by_following,
-        pt_by_liking,
-        pt_by_retweet,
-        pt_by_replying,
-        total_pt
-    )
-    .execute(pool)
-    .await?;
-
-    // Return the UUID of the newly inserted row
-    Ok(id)
-}
-
-pub async fn update_pt_by_following(
-    pool: &PgPool,
-    user_id: Uuid,
-    new_pt_by_following: Option<BigDecimal>,
-) -> Result<u64> {
-    let rows_affected = sqlx::query!(
-        r#"
-        UPDATE staking_raids
-        SET pt_by_following = $1
-        WHERE id = $2
-        "#,
-        new_pt_by_following,
-        user_id
-    )
-    .execute(pool)
-    .await?
-    .rows_affected(); // Get the number of rows affected by the update
-
-    Ok(rows_affected) // Return the number of rows updated
-}
-
-pub async fn update_pt_by_liking(
-    pool: &PgPool,
-    user_id: Uuid,
-    new_pt_by_liking: Option<BigDecimal>,
-) -> Result<u64> {
-    let rows_affected = sqlx::query!(
-        r#"
-        UPDATE staking_raids
-        SET pt_by_liking = $1
-        WHERE id = $2
-        "#,
-        new_pt_by_liking,
-        user_id
-    )
-    .execute(pool)
-    .await?
-    .rows_affected(); // Get the number of rows affected by the update
-
-    Ok(rows_affected) // Return the number of rows updated
-}
-
-pub async fn update_pt_by_retweet(
-    pool: &PgPool,
-    user_id: Uuid,
-    new_pt_by_retweet: Option<BigDecimal>,
-) -> Result<u64> {
-    let rows_affected = sqlx::query!(
-        r#"
-        UPDATE staking_raids
-        SET pt_by_retweet = $1
-        WHERE id = $2
-        "#,
-        new_pt_by_retweet,
-        user_id
-    )
-    .execute(pool)
-    .await?
-    .rows_affected(); // Get the number of rows affected by the update
-
-    Ok(rows_affected) // Return the number of rows updated
-}
-
-pub async fn update_pt_by_replying(
-    pool: &PgPool,
-    user_id: Uuid,
-    new_pt_by_replying: Option<BigDecimal>,
-) -> Result<u64> {
-    let rows_affected = sqlx::query!(
-        r#"
-        UPDATE staking_raids
-        SET pt_by_replying = $1
-        WHERE id = $2
-        "#,
-        new_pt_by_replying,
-        user_id
-    )
-    .execute(pool)
-    .await?
-    .rows_affected(); // Get the number of rows affected by the update
-
-    Ok(rows_affected) // Return the number of rows updated
-}
-
-pub async fn update_total_pt(
-    pool: &PgPool,
-    user_id: Uuid,
-    total_pt: Option<BigDecimal>,
-) -> Result<u64> {
-    let rows_affected = sqlx::query!(
-        r#"
-        UPDATE staking_raids
-        SET total_pt = $1
-        WHERE id = $2
-        "#,
-        total_pt,
-        user_id
-    )
-    .execute(pool)
-    .await?
-    .rows_affected(); // Get the number of rows affected by the update
-
-    Ok(rows_affected) // Return the number of rows updated
-}
-
-pub async fn get_raids_by_id(pool: &PgPool, user_id: Uuid) -> Result<Raids> {
-    let user = sqlx::query_as!(
+    project_id: String,
+    tw_id: String,
+    user_id: String,
+) -> Result<Option<Raids>> {
+    let users = sqlx::query_as!(
         Raids,
         r#"
         SELECT id, project_id, tw_id, user_id, pt_by_following, pt_by_liking, pt_by_retweet, pt_by_replying, total_pt
         FROM staking_raids
-        WHERE id = $1
+        WHERE project_id = $1 AND tw_id = $2 AND user_id = $3
         "#,
+        project_id,
+        tw_id,
         user_id
     )
-    .fetch_one(pool)
+    .fetch_optional(pool)
     .await?;
 
-    Ok(user)
+    Ok(users)
+}
+
+pub async fn get_raids_by_project_and_user_id(
+    pool: &PgPool,
+    project_id: String,
+    user_id: String
+) -> Result<Vec<Raids>> {
+    let users = sqlx::query_as!(
+        Raids,
+        r#"
+        SELECT id, project_id, tw_id, user_id, pt_by_following, pt_by_liking, pt_by_retweet, pt_by_replying, total_pt
+        FROM staking_raids
+        WHERE project_id = $1 AND user_id = $2
+        "#,
+        project_id,
+        user_id
+    )
+    .fetch_all(pool)
+    .await?;
+
+    Ok(users)
 }
 
 pub async fn get_leaderboard_by_project_id(
     pool: &PgPool,
     project_id: String,
 ) -> Result<Vec<LeaderBoard>> {
-    // Struct or tuple that matches the query result
     let leader_board = sqlx::query_as!(
-        LeaderBoard, // Replace with the actual struct or tuple name
+        LeaderBoard,
         r#"
         SELECT 
             user_id, 
@@ -214,10 +137,86 @@ pub async fn get_leaderboard_by_project_id(
         ORDER BY 
             total_pt DESC
         "#,
-        project_id // Pass as query parameter
+        project_id
     )
     .fetch_all(pool)
-    .await?; // Fix typo: .await instead of .awai
+    .await?;
 
     Ok(leader_board)
+}
+
+pub async fn update_pt_by_following(
+    pool: &PgPool,
+    project_id: String,
+    user_id: String,
+    new_pt_by_following: BigDecimal,
+) -> Result<Raids> {
+    let updated_row = sqlx::query_as!(
+        Raids,
+        r#"
+        UPDATE staking_raids
+        SET pt_by_following = $1
+        WHERE project_id = $2 AND user_id = $3
+        RETURNING id, project_id, tw_id, user_id, pt_by_following, pt_by_liking, pt_by_retweet, pt_by_replying, total_pt
+        "#,
+        new_pt_by_following,
+        project_id,
+        user_id
+    )
+    .fetch_one(pool)
+    .await?;
+
+    Ok(updated_row)
+}
+
+pub async fn update_pt_by_retweet(
+    pool: &PgPool,
+    project_id: String,
+    tw_id: String,
+    user_id: String,
+    new_pt_by_retweet: BigDecimal,
+) -> Result<Raids> {
+    let updated_row: Raids = sqlx::query_as!(
+        Raids,
+        r#"
+        UPDATE staking_raids
+        SET pt_by_replying = $1
+        WHERE project_id = $2 AND tw_id = $3 AND user_id = $4
+        RETURNING id, project_id, tw_id, user_id, pt_by_following, pt_by_liking, pt_by_retweet, pt_by_replying, total_pt
+        "#,
+        new_pt_by_retweet,
+        project_id,
+        tw_id,
+        user_id
+    )
+    .fetch_one(pool)
+    .await?;
+
+    Ok(updated_row)
+}
+
+pub async fn update_pt_by_replying(
+    pool: &PgPool,
+    project_id: String,
+    tw_id: String,
+    user_id: String,
+    new_pt_by_replying: BigDecimal,
+) -> Result<Raids> {
+    let updated_row = sqlx::query_as!(
+        Raids,
+        r#"
+        UPDATE staking_raids
+        SET pt_by_replying = $1
+        WHERE project_id = $2 AND tw_id = $3 AND user_id = $4
+        RETURNING id, project_id, tw_id, user_id, pt_by_following, pt_by_liking, pt_by_retweet, pt_by_replying, total_pt
+        "#,
+        new_pt_by_replying,
+        project_id,
+        tw_id,
+        user_id
+    )
+    .fetch_one(pool) 
+    .await?;
+
+    Ok(updated_row)
 }

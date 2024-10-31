@@ -1,8 +1,3 @@
-pub const BONUS_POINTS_FOR_FOLLOWING: i32 = 10;
-pub const BONUS_POINTS_FOR_RETWEET: i32 = 5;
-pub const BONUS_POINTS_FOR_LIKE: i32 = 2;
-pub const BONUS_POINTS_FOR_REPLY: i32 = 3;
-
 pub enum Action {
     Following,
     Retweet,
