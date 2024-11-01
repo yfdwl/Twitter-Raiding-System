@@ -2,12 +2,7 @@ pub mod handlers;
 
 use apistos::web::{get, post, scope, Scope};
 use handlers::raids::{
-    post_send_msg_to_channel,
-    post_send_msg_to_owner,
-    project_following,
-    track_leaderboard,
-    tweet_replying,
-    tweet_retweet
+    get_user_points, post_send_msg_to_channel, post_send_msg_to_owner, project_following, track_leaderboard, tweet_replying, tweet_retweet
 };
 
 pub trait Controller {
@@ -26,6 +21,10 @@ impl Controller for RaidsController {
             .service(
                 Scope::new("/track")
                     .route("/leaderboarder/{project_id}", get().to(track_leaderboard)),
+            )
+            .service(
+                Scope::new("/user")
+                    .route("/{user_id}/{raid_id}", get().to(get_user_points))
             )
             .service(
                 Scope::new("/action")

@@ -220,3 +220,23 @@ pub async fn update_pt_by_replying(
 
     Ok(updated_row)
 }
+
+pub async fn get_user_points_by_raid(
+    pool: &PgPool,
+    project_id: String,
+    user_id: String
+) -> Result<Option<BigDecimal>> {
+    let user_points = sqlx::query_scalar!(
+        r#"
+        SELECT SUM(total_pt)
+        FROM staking_raids
+        WHERE project_id = $1 AND user_id = $2
+        "#,
+        project_id,
+        user_id
+    )
+    .fetch_one(pool) 
+    .await?;
+
+    Ok(user_points)
+}

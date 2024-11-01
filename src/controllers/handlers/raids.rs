@@ -1,4 +1,7 @@
-use actix_web::{web::{self, Data}, Error as ActixError, HttpResponse};
+use actix_web::{
+    web::{self, Data},
+    Error as ActixError, HttpResponse,
+};
 use apistos::{api_operation, ApiComponent};
 use bigdecimal::BigDecimal;
 use schemars::JsonSchema;
@@ -13,12 +16,12 @@ use crate::{
         points_calc::calc::get_bonus_points,
         staking_raids::raids::{
             create_new_raid, get_leaderboard_by_project_id, get_raids_by_project_and_user_id,
-            get_user_by_id, update_pt_by_following, update_pt_by_replying, update_pt_by_retweet,
+            get_user_by_id, get_user_points_by_raid, update_pt_by_following, update_pt_by_replying,
+            update_pt_by_retweet,
         },
         users::beta_users::get_all_beta_users_twitter_ids,
         xapis::{
-            following_users::get_following_users,
-            replying_users::get_replying_users,
+            following_users::get_following_users, replying_users::get_replying_users,
             retweeted_users::get_retweeted_users,
         },
     },
@@ -42,6 +45,12 @@ pub struct ReplyPath {
     tweet_id: String,
 }
 
+#[derive(Serialize, Deserialize, JsonSchema, ApiComponent)]
+pub struct UserPointsPath {
+    user_id: String,
+    raid_id: String,
+}
+
 #[api_operation(summary = "Send message to server owner", tag = "user")]
 pub async fn post_send_msg_to_owner(
     payload: web::Json<SendMsgRequest>,
@@ -52,8 +61,12 @@ pub async fn post_send_msg_to_owner(
     match send_msg_to_owner(guild_id, message_content).await {
         Ok(_) => Ok(HttpResponse::Ok().json("Message sent successfully to the server owner.")),
         Err(e) => {
-            eprintln!("Failed to send message to the server owner. Guild ID: {}, Error: {}", guild_id, e);
-            Ok(HttpResponse::InternalServerError().json("Failed to send message to the server owner."))
+            eprintln!(
+                "Failed to send message to the server owner. Guild ID: {}, Error: {}",
+                guild_id, e
+            );
+            Ok(HttpResponse::InternalServerError()
+                .json("Failed to send message to the server owner."))
         }
     }
 }
@@ -68,7 +81,10 @@ pub async fn post_send_msg_to_channel(
     match send_msg_channel(channel_id, message_content).await {
         Ok(_) => Ok(HttpResponse::Ok().json("Message sent successfully to the channel.")),
         Err(e) => {
-            eprintln!("Failed to send message to channel. Channel ID: {}, Error: {}", channel_id, e);
+            eprintln!(
+                "Failed to send message to channel. Channel ID: {}, Error: {}",
+                channel_id, e
+            );
             Ok(HttpResponse::InternalServerError().json("Failed to send message to the channel."))
         }
     }
@@ -84,7 +100,10 @@ pub async fn track_leaderboard(
     match get_leaderboard_by_project_id(db.pool(), project_id.clone()).await {
         Ok(leaderboard) => Ok(HttpResponse::Ok().json(leaderboard)), // Send leaderboard as JSON
         Err(e) => {
-            eprintln!("Error retrieving leaderboard for project ID: {}: {:?}", project_id, e);
+            eprintln!(
+                "Error retrieving leaderboard for project ID: {}: {:?}",
+                project_id, e
+            );
             Ok(HttpResponse::InternalServerError().json("Error retrieving leaderboard"))
         }
     }
@@ -223,8 +242,13 @@ pub async fn project_following(
                 get_raids_by_project_and_user_id(db.pool(), project_id.clone(), beta_user.clone())
                     .await
                     .map_err(|e| {
-                        eprintln!("Error fetching raids by user ID for Project ID: {}. User: {}. Error: {:?}", project_id, beta_user, e);
-                        actix_web::error::ErrorInternalServerError("Error retrieving raids by user ID.")
+                        eprintln!(
+                    "Error fetching raids by user ID for Project ID: {}. User: {}. Error: {:?}",
+                    project_id, beta_user, e
+                );
+                        actix_web::error::ErrorInternalServerError(
+                            "Error retrieving raids by user ID.",
+                        )
                     })?;
 
             if (raids.len() != 0) {
@@ -263,4 +287,26 @@ pub async fn project_following(
     }
 
     Ok(HttpResponse::Ok().json("SUCCESS"))
+}
+#[api_operation(summary = "fetch how many points a user has", tag = "user")]
+pub async fn get_user_points(
+    db: Data<PgDb>,
+    path: web::Path<UserPointsPath>,
+) -> Result<HttpResponse, ActixError> {
+    let user_id = &path.user_id;
+    let project_id = &path.raid_id;
+
+    match get_user_points_by_raid(db.pool(), project_id.clone(), user_id.clone()).await {
+        Ok(res) => {
+            let user_points = res.unwrap();
+            Ok(HttpResponse::Ok().json(user_points))
+        }
+        Err(e) => {
+            eprintln!(
+                "Error retrieving user's points of project id is and user id is: {} {}: {:?}",
+                project_id, user_id, e
+            );
+            Ok(HttpResponse::InternalServerError().json("Error retrieving user points"))
+        }
+    }
 }
