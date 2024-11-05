@@ -2,7 +2,7 @@ pub mod handlers;
 
 use apistos::web::{get, post, scope, Scope};
 use handlers::raids::{
-    get_user_points, post_send_msg_to_channel, post_send_msg_to_owner, project_following, track_leaderboard, tweet_replying, tweet_retweet
+    create_new_project, get_points, join_project, post_send_msg_to_channel, post_send_msg_to_owner, track_leaderboard,
 };
 
 pub trait Controller {
@@ -18,22 +18,12 @@ impl Controller for RaidsController {
                     .route("/owner", post().to(post_send_msg_to_owner))
                     .route("/channel", post().to(post_send_msg_to_channel)),
             )
+            .service(Scope::new("/create").route("", post().to(create_new_project)))
             .service(
-                Scope::new("/track")
-                    .route("/leaderboarder/{project_id}", get().to(track_leaderboard)),
+                Scope::new("/project/join")
+                    .route("/{user_id}/{project_id}", get().to(join_project)),
             )
-            .service(
-                Scope::new("/user")
-                    .route("/{user_id}/{raid_id}", get().to(get_user_points))
-            )
-            .service(
-                Scope::new("/action")
-                    .route(
-                        "/replying/{project_id}/{tweet_id}",
-                        get().to(tweet_replying),
-                    )
-                    .route("/retweet/{project_id}/{tweet_id}", get().to(tweet_retweet))
-                    .route("/following/{project_id}", get().to(project_following)),
-            )
+            .service(Scope::new("/points").route("/{user_id}/{project_id}", get().to(get_points)))
+            .service(Scope::new("/leaderboard").route("/{project_id}", get().to(track_leaderboard)))
     }
 }
