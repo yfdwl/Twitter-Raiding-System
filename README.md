@@ -16,7 +16,7 @@ The system tracks the accumulation of points based on these user actions. It all
 1. **Raiding Points System**
     - Users earn points based on configurable actions like following, liking, reposting, and commenting.
     - Projects can define how many points are awarded for each action.
-    - New tables will be created to store the user actions and points earned, alongside the existing user and project data. jOwdbZEMfV
+    - New tables will be created to store the user actions and points earned, alongside the existing user and project data.
 
 2. **Customizable Rewards**
     - Projects can define the type of rewards users can earn based on their accumulated points.
