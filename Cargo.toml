@@ -25,7 +25,7 @@ apistos = { version = "0.2", features = [
     "scalar",
     "multipart",
     "swagger-ui",
-] }
+] } bMMKliAWgt
 sqlx = { version = "0.7.0", default-features = false, features = [
     "postgres",
     "macros",
