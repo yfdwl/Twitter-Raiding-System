@@ -10,7 +10,7 @@ The **Raiding Points System** allows projects to define custom raiding incentive
 - Commenting with a specific number of tags
 
 The system tracks the accumulation of points based on these user actions. It allows projects to customize the points awarded for each action and select different types of rewards, such as BRC-20 tokens, Runes, Inscriptions, or off-chain points.
-
+ fRLmDPfu0e
 ### Key Features
 
 1. **Raiding Points System**
