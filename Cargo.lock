@@ -454,7 +454,7 @@ name = "async-trait"
 version = "0.1.83"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "721cae7de5c34fbb2acd27e21e6d2cf7b886dce0c27388d46c4e6c47ea4318dd"
-dependencies = [ Lx6qP4YFoj
+dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.79",
