@@ -24,7 +24,7 @@ apistos = { version = "0.2", features = [
     "qs_query",
     "scalar",
     "multipart",
-    "swagger-ui", he8u1jkEhA
+    "swagger-ui",
 ] }
 sqlx = { version = "0.7.0", default-features = false, features = [
     "postgres",
