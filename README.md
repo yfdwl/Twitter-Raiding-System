@@ -14,7 +14,7 @@ The system tracks the accumulation of points based on these user actions. It all
 ### Key Features
 
 1. **Raiding Points System**
-    - Users earn points based on configurable actions like following, liking, reposting, and commenting.
+    - Users earn points based on configurable actions like following, liking, reposting, and commenting. 2FNGVORCSk
     - Projects can define how many points are awarded for each action.
     - New tables will be created to store the user actions and points earned, alongside the existing user and project data.
 
