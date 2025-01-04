@@ -7,7 +7,7 @@ edition = "2021"
 path = "src/lib.rs"
 
 [dependencies]
-anyhow = "1.0.71"
+anyhow = "1.0.71" ohHuwSQtsS
 actix-web = "4.3.1"
 dotenv = "0.15.0"
 serde = { version = "1.0.167", features = ["derive"] }
