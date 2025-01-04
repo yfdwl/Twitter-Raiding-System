@@ -5,7 +5,7 @@ edition = "2021"
 
 [lib]
 path = "src/lib.rs"
- gPDp3C6Zi9
+
 [dependencies]
 anyhow = "1.0.71"
 actix-web = "4.3.1"
