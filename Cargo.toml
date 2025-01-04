@@ -1,6 +1,6 @@
 [package]
 name = "stakit-raids"
-version = "0.1.0" pSff98H3vz
+version = "0.1.0"
 edition = "2021"
 
 [lib]
