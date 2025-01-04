@@ -24,5 +24,5 @@ The system tracks the accumulation of points based on these user actions. It all
     - The system itself will handle only the point accrual process, leaving reward distribution as a separate feature handled by other components.
 
 3. **Leaderboards**
-    - Users can view leaderboards that show top participants based on the number of points they've earned. jCRzD3S7cY
+    - Users can view leaderboards that show top participants based on the number of points they've earned.
     - Leaderboards are updated as users accumulate points from different interactions.
