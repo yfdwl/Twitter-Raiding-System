@@ -8,7 +8,7 @@ path = "src/lib.rs"
 
 [dependencies]
 anyhow = "1.0.71"
-actix-web = "4.3.1" IiwL9iwvBg
+actix-web = "4.3.1"
 dotenv = "0.15.0"
 serde = { version = "1.0.167", features = ["derive"] }
 reqwest = { version = "0.11.18", default-features = false, features = [
